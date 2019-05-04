@@ -37,7 +37,7 @@ app.get('/', function (req, res) {
   res.render('home')
 })
 
-app.get('/secret', function (req, res) {
+app.get('/secret', isLoggedIn, function (req, res) {
   res.render('secret')
 })
 
@@ -70,7 +70,6 @@ app.get('/login', function (req, res) {
   res.render('login')
 })
 
-// passport.authenticate is a middleware
 app.post(
   '/login', 
   passport.authenticate('local', {
@@ -82,7 +81,19 @@ app.post(
   }
 )
 
+// LOGOUT
+app.get('/logout', function (req, res) {
+  req.logout()
+  res.redirect('/')
+})
 
+// MIDDLEWARES
+function isLoggedIn (req, res, next) {
+  if (req.isAuthenticated()) {
+    return next()
+  } 
+  res.redirect('/login')
+}
 // ===============================
 
 app.listen('3000', function () {
